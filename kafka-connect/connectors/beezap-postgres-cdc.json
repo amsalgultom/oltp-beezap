@@ -1,0 +1,44 @@
+{
+  "name": "beezap-postgres-cdc",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+
+    "database.hostname": "${PG_HOST}",
+    "database.port": "${PG_PORT}",
+    "database.user": "${DEBEZIUM_DB_USER}",
+    "database.password": "${DEBEZIUM_DB_PASSWORD}",
+    "database.dbname": "${PG_DATABASE}",
+
+    "topic.prefix": "cdc",
+    "plugin.name": "pgoutput",
+    "publication.name": "beezap_cdc",
+    "publication.autocreate.mode": "disabled",
+    "slot.name": "debezium_beezap",
+
+    "schema.include.list": "public,tenant_.*",
+    "table.include.list": "public\\.tenants,tenant_.*\\.(users|wa_chat_contacts|wa_chat_messages|user_sessions|contact_results|contact_results_history)",
+    "column.exclude.list": "public\\.tenants\\.(wa_number|waba_id|email_wa|password_wa),tenant_.*\\.users\\.(password|meta_data),tenant_.*\\.wa_chat_contacts\\.(meta_data|last_message),tenant_.*\\.wa_chat_messages\\.(content|media_url|media_filename|meta_data|error_message|template_parameters|attachment|link_file|bot_response)",
+
+    "tombstones.on.delete": "false",
+    "snapshot.mode": "initial",
+    "decimal.handling.mode": "double",
+    "heartbeat.interval.ms": "10000",
+
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+
+    "transforms": "unwrap,route",
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.add.fields": "op:__op,source.ts_ms:__source_ts_ms,source.schema:__source_schema",
+
+    "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.route.regex": "^cdc\\.(?:[^.]+)\\.([^.]+)$",
+    "transforms.route.replacement": "cdc.$1"
+  }
+}

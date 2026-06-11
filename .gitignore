@@ -1,0 +1,7 @@
+# Real secrets/config — copy from .env.example
+.env
+
+# ClickHouse / Postgres / Superset local data (when not using named volumes)
+clickhouse-data/
+superset-home/
+*.log

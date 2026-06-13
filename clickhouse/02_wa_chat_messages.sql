@@ -102,34 +102,38 @@ PARTITION BY toYYYYMM(created_at)
 ORDER BY (tenant_id, created_at, id);
 
 -- ----------------------------------------------------------------------------
--- Materialized view: queue -> target
+-- Materialized view: queue -> target (with tenant join)
+-- Joins with beezap.tenants to recover the tenant UUID from slug.
+-- If a slug doesn't exist in tenants (shouldn't happen), uses all-zero UUID
+-- as a fallback for data integrity.
 -- ----------------------------------------------------------------------------
 CREATE MATERIALIZED VIEW beezap.wa_chat_messages_mv TO beezap.wa_chat_messages AS
 SELECT
-    beezap_tenant_id(__source_schema)                  AS tenant_id,
-    toUUID(id)                                         AS id,
-    toUUID(contact_id)                                 AS contact_id,
-    message_id,
-    type,
-    sender,
-    status,
-    media_type,
-    sent_by,
-    bot_id,
-    "timestamp"                                        AS raw_timestamp,
-    beezap_parse_datetime(created_at, __source_ts_ms)  AS created_at,
-    beezap_parse_datetime(updated_at, __source_ts_ms)  AS updated_at,
-    category_message,
-    template_name,
-    template_language,
-    agent,
-    beezap_parse_datetime_or_null(delivered_at)        AS delivered_at,
-    beezap_parse_datetime_or_null(read_at)             AS read_at,
-    beezap_parse_datetime_or_null(failed_at)           AS failed_at,
-    toUUIDOrNull(campaign_id)                          AS campaign_id,
-    participant_phone,
-    participant_name,
-    reply_to_message_id,
-    (__deleted = 'true')                               AS is_deleted,
-    __source_ts_ms                                     AS _version
-FROM beezap.wa_chat_messages_queue;
+    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    toUUID(q.id)                                       AS id,
+    toUUID(q.contact_id)                               AS contact_id,
+    q.message_id,
+    q.type,
+    q.sender,
+    q.status,
+    q.media_type,
+    q.sent_by,
+    q.bot_id,
+    q."timestamp"                                      AS raw_timestamp,
+    beezap_parse_datetime(q.created_at, q.__source_ts_ms)  AS created_at,
+    beezap_parse_datetime(q.updated_at, q.__source_ts_ms)  AS updated_at,
+    q.category_message,
+    q.template_name,
+    q.template_language,
+    q.agent,
+    beezap_parse_datetime_or_null(q.delivered_at)      AS delivered_at,
+    beezap_parse_datetime_or_null(q.read_at)           AS read_at,
+    beezap_parse_datetime_or_null(q.failed_at)         AS failed_at,
+    toUUIDOrNull(q.campaign_id)                        AS campaign_id,
+    q.participant_phone,
+    q.participant_name,
+    q.reply_to_message_id,
+    (q.__deleted = 'true')                             AS is_deleted,
+    q.__source_ts_ms                                   AS _version
+FROM beezap.wa_chat_messages_queue q
+LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);

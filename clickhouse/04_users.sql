@@ -56,17 +56,18 @@ ORDER BY (tenant_id, id);
 
 CREATE MATERIALIZED VIEW beezap.users_mv TO beezap.users AS
 SELECT
-    beezap_tenant_id(__source_schema)                  AS tenant_id,
-    id,
-    username,
-    email,
-    full_name,
-    level,
-    role_id,
-    is_active,
-    beezap_parse_datetime_or_null(last_login)          AS last_login,
-    beezap_parse_datetime(created_at, __source_ts_ms)  AS created_at,
-    beezap_parse_datetime(updated_at, __source_ts_ms)  AS updated_at,
-    (__deleted = 'true')                               AS is_deleted,
-    __source_ts_ms                                     AS _version
-FROM beezap.users_queue;
+    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    q.id,
+    q.username,
+    q.email,
+    q.full_name,
+    q.level,
+    q.role_id,
+    q.is_active,
+    beezap_parse_datetime_or_null(q.last_login)        AS last_login,
+    beezap_parse_datetime(q.created_at, q.__source_ts_ms)  AS created_at,
+    beezap_parse_datetime(q.updated_at, q.__source_ts_ms)  AS updated_at,
+    (q.__deleted = 'true')                             AS is_deleted,
+    q.__source_ts_ms                                   AS _version
+FROM beezap.users_queue q
+LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);

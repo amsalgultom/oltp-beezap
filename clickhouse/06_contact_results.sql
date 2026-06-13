@@ -49,14 +49,15 @@ ORDER BY (tenant_id, contact_id, id);
 
 CREATE MATERIALIZED VIEW beezap.contact_results_mv TO beezap.contact_results AS
 SELECT
-    beezap_tenant_id(__source_schema)                  AS tenant_id,
-    toUUID(id)                                         AS id,
-    toUUID(contact_id)                                 AS contact_id,
-    results,
-    created_by,
-    updated_by,
-    beezap_parse_datetime(created_at, __source_ts_ms)  AS created_at,
-    beezap_parse_datetime(updated_at, __source_ts_ms)  AS updated_at,
-    (__deleted = 'true')                               AS is_deleted,
-    __source_ts_ms                                     AS _version
-FROM beezap.contact_results_queue;
+    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    toUUID(q.id)                                       AS id,
+    toUUID(q.contact_id)                               AS contact_id,
+    q.results,
+    q.created_by,
+    q.updated_by,
+    beezap_parse_datetime(q.created_at, q.__source_ts_ms)  AS created_at,
+    beezap_parse_datetime(q.updated_at, q.__source_ts_ms)  AS updated_at,
+    (q.__deleted = 'true')                             AS is_deleted,
+    q.__source_ts_ms                                   AS _version
+FROM beezap.contact_results_queue q
+LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);

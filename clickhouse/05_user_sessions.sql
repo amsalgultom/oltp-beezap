@@ -61,20 +61,21 @@ ORDER BY (tenant_id, login_time, id);
 
 CREATE MATERIALIZED VIEW beezap.user_sessions_mv TO beezap.user_sessions AS
 SELECT
-    beezap_tenant_id(__source_schema)                  AS tenant_id,
-    toUUID(id)                                         AS id,
-    user_id,
-    username,
-    device_info,
-    user_agent,
-    ip_address,
-    beezap_parse_datetime(login_time, __source_ts_ms)  AS login_time,
-    beezap_parse_datetime(last_activity, __source_ts_ms) AS last_activity,
-    beezap_parse_datetime_or_null(logout_time)         AS logout_time,
-    logout_reason,
-    is_online,
-    beezap_parse_datetime(created_at, __source_ts_ms)  AS created_at,
-    beezap_parse_datetime(updated_at, __source_ts_ms)  AS updated_at,
-    (__deleted = 'true')                               AS is_deleted,
-    __source_ts_ms                                     AS _version
-FROM beezap.user_sessions_queue;
+    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    toUUID(q.id)                                       AS id,
+    q.user_id,
+    q.username,
+    q.device_info,
+    q.user_agent,
+    q.ip_address,
+    beezap_parse_datetime(q.login_time, q.__source_ts_ms)  AS login_time,
+    beezap_parse_datetime(q.last_activity, q.__source_ts_ms) AS last_activity,
+    beezap_parse_datetime_or_null(q.logout_time)       AS logout_time,
+    q.logout_reason,
+    q.is_online,
+    beezap_parse_datetime(q.created_at, q.__source_ts_ms)  AS created_at,
+    beezap_parse_datetime(q.updated_at, q.__source_ts_ms)  AS updated_at,
+    (q.__deleted = 'true')                             AS is_deleted,
+    q.__source_ts_ms                                   AS _version
+FROM beezap.user_sessions_queue q
+LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);

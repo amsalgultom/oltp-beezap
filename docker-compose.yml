@@ -51,20 +51,6 @@ services:
       - clickhouse-data:/var/lib/clickhouse
 
   # --------------------------------------------------------------------------
-  # Superset metadata DB (separate from the Beezap OLTP Postgres on Server A)
-  # --------------------------------------------------------------------------
-  superset-db:
-    image: postgres:16
-    container_name: beezap-superset-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${SUPERSET_DB_NAME:-superset}
-      POSTGRES_USER: ${SUPERSET_DB_USER:-superset}
-      POSTGRES_PASSWORD: ${SUPERSET_DB_PASSWORD}
-    volumes:
-      - superset-db-data:/var/lib/postgresql/data
-
-  # --------------------------------------------------------------------------
   # Superset — dashboards on top of ClickHouse
   # --------------------------------------------------------------------------
   superset:
@@ -72,16 +58,15 @@ services:
     container_name: beezap-superset
     restart: unless-stopped
     depends_on:
-      - superset-db
       - clickhouse
     ports:
       - "8088:8088"
     environment:
       SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
-      SUPERSET_DB_HOST: superset-db
-      SUPERSET_DB_PORT: "5432"
-      SUPERSET_DB_USER: ${SUPERSET_DB_USER:-superset}
-      SUPERSET_DB_PASSWORD: ${SUPERSET_DB_PASSWORD}
+      SUPERSET_DB_HOST: ${SUPERSET_DB_HOST:-10.10.8.93}
+      SUPERSET_DB_PORT: ${SUPERSET_DB_PORT:-5432}
+      SUPERSET_DB_USER: ${SUPERSET_DB_USER:-postgres}
+      SUPERSET_DB_PASSWORD: ${PG_SUPERUSER_PASSWORD}
       SUPERSET_DB_NAME: ${SUPERSET_DB_NAME:-superset}
       REDIS_URL: ${REDIS_URL}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -90,5 +75,4 @@ services:
 
 volumes:
   clickhouse-data:
-  superset-db-data:
   superset-home:

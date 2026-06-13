@@ -37,9 +37,9 @@ SELECT * FROM beezap.contact_results_history FINAL WHERE is_deleted = 0;
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW beezap.v_message_delivery_funnel AS
 SELECT
-    m.tenant_id,
+    m.tenant_slug,
+    t.id   AS tenant_id,
     t.name AS tenant_name,
-    t.slug AS tenant_slug,
     m.day,
     m.campaign_id,
     m.category_message,
@@ -50,7 +50,7 @@ SELECT
 FROM
 (
     SELECT
-        tenant_id,
+        tenant_slug,
         toDate(created_at) AS day,
         campaign_id,
         category_message,
@@ -61,13 +61,13 @@ FROM
     FROM beezap.wa_chat_messages
     FINAL
     WHERE is_deleted = 0
-    GROUP BY tenant_id, day, campaign_id, category_message, sender, status, type
+    GROUP BY tenant_slug, day, campaign_id, category_message, sender, status, type
 ) AS m
 LEFT JOIN
 (
-    SELECT id AS tenant_id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
+    SELECT id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
 ) AS t
-ON m.tenant_id = t.tenant_id;
+ON m.tenant_slug = t.slug;
 
 
 -- ----------------------------------------------------------------------------
@@ -76,9 +76,9 @@ ON m.tenant_id = t.tenant_id;
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW beezap.v_contact_growth AS
 SELECT
-    c.tenant_id,
+    c.tenant_slug,
+    t.id   AS tenant_id,
     t.name AS tenant_name,
-    t.slug AS tenant_slug,
     c.day,
     c.campaign_id,
     c.campaign_name,
@@ -88,7 +88,7 @@ SELECT
 FROM
 (
     SELECT
-        tenant_id,
+        tenant_slug,
         toDate(created_at) AS day,
         campaign_id,
         campaign_name,
@@ -98,13 +98,13 @@ FROM
     FROM beezap.wa_chat_contacts
     FINAL
     WHERE is_deleted = 0
-    GROUP BY tenant_id, day, campaign_id, campaign_name, service_type, handle_by
+    GROUP BY tenant_slug, day, campaign_id, campaign_name, service_type, handle_by
 ) AS c
 LEFT JOIN
 (
-    SELECT id AS tenant_id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
+    SELECT id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
 ) AS t
-ON c.tenant_id = t.tenant_id;
+ON c.tenant_slug = t.slug;
 
 
 -- ----------------------------------------------------------------------------
@@ -115,9 +115,9 @@ ON c.tenant_id = t.tenant_id;
 -- ----------------------------------------------------------------------------
 CREATE OR REPLACE VIEW beezap.v_agent_sessions AS
 SELECT
-    s.tenant_id,
+    s.tenant_slug,
+    t.id   AS tenant_id,
     t.name AS tenant_name,
-    t.slug AS tenant_slug,
     s.day,
     s.username,
     s.session_count,
@@ -125,7 +125,7 @@ SELECT
 FROM
 (
     SELECT
-        tenant_id,
+        tenant_slug,
         toDate(login_time) AS day,
         username,
         count() AS session_count,
@@ -133,10 +133,10 @@ FROM
     FROM beezap.user_sessions
     FINAL
     WHERE is_deleted = 0
-    GROUP BY tenant_id, day, username
+    GROUP BY tenant_slug, day, username
 ) AS s
 LEFT JOIN
 (
-    SELECT id AS tenant_id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
+    SELECT id, name, slug FROM beezap.tenants FINAL WHERE is_deleted = 0
 ) AS t
-ON s.tenant_id = t.tenant_id;
+ON s.tenant_slug = t.slug;

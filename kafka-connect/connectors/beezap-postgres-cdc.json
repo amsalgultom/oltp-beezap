@@ -35,7 +35,7 @@
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.delete.handling.mode": "rewrite",
     "transforms.unwrap.drop.tombstones": "true",
-    "transforms.unwrap.add.fields": "op:__op,source.ts_ms:__source_ts_ms,source.schema:__source_schema",
+    "transforms.unwrap.add.fields": "op:op,source.ts_ms:source_ts_ms,source.schema:source_schema",
 
     "transforms.route.type": "org.apache.kafka.connect.transforms.RegexRouter",
     "transforms.route.regex": "^cdc\\.(?:[^.]+)\\.([^.]+)$",

@@ -31,7 +31,7 @@ SETTINGS
 
 CREATE TABLE IF NOT EXISTS beezap.contact_results_history
 (
-    tenant_id   UUID,
+    tenant_slug String,
     id          UUID,
     contact_id  UUID,
     results     String,
@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS beezap.contact_results_history
 )
 ENGINE = ReplacingMergeTree(_version)
 PARTITION BY toYYYYMM(created_at)
-ORDER BY (tenant_id, contact_id, created_at, id);
+ORDER BY (tenant_slug, contact_id, created_at, id);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.contact_results_history_mv TO beezap.contact_results_history AS
 SELECT
-    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    beezap_tenant_id(q.__source_schema)                AS tenant_slug,
     toUUID(q.id)                                       AS id,
     toUUID(q.contact_id)                               AS contact_id,
     q.results,
@@ -55,6 +55,5 @@ SELECT
     beezap_parse_datetime(q.created_at, q.__source_ts_ms)  AS created_at,
     (q.__deleted = 'true')                             AS is_deleted,
     q.__source_ts_ms                                   AS _version
-FROM beezap.contact_results_history_queue q
-LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+FROM beezap.contact_results_history_queue q;
 

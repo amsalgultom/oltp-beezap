@@ -48,7 +48,7 @@ SETTINGS
 
 CREATE TABLE IF NOT EXISTS beezap.wa_chat_contacts
 (
-    tenant_id           UUID,
+    tenant_slug         String,
     id                  UUID,
     phone               String,
     masking_number      String,
@@ -78,11 +78,11 @@ CREATE TABLE IF NOT EXISTS beezap.wa_chat_contacts
 )
 ENGINE = ReplacingMergeTree(_version)
 PARTITION BY toYYYYMM(created_at)
-ORDER BY (tenant_id, created_at, id);
+ORDER BY (tenant_slug, created_at, id);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.wa_chat_contacts_mv TO beezap.wa_chat_contacts AS
 SELECT
-    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    beezap_tenant_id(q.__source_schema)                AS tenant_slug,
     toUUID(q.id)                                       AS id,
     q.phone,
     q.masking_number,
@@ -108,6 +108,5 @@ SELECT
     q.delivery_status,
     (q.__deleted = 'true')                             AS is_deleted,
     q.__source_ts_ms                                   AS _version
-FROM beezap.wa_chat_contacts_queue q
-LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+FROM beezap.wa_chat_contacts_queue q;
 

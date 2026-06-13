@@ -36,7 +36,7 @@ SETTINGS
 
 CREATE TABLE IF NOT EXISTS beezap.users
 (
-    tenant_id   UUID,
+    tenant_slug String,
     id          Int32,
     username    String,
     email       Nullable(String),
@@ -52,11 +52,11 @@ CREATE TABLE IF NOT EXISTS beezap.users
     _version    UInt64
 )
 ENGINE = ReplacingMergeTree(_version)
-ORDER BY (tenant_id, id);
+ORDER BY (tenant_slug, id);
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.users_mv TO beezap.users AS
 SELECT
-    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    beezap_tenant_id(q.__source_schema)                AS tenant_slug,
     q.id,
     q.username,
     q.email,
@@ -69,6 +69,5 @@ SELECT
     beezap_parse_datetime(q.updated_at, q.__source_ts_ms)  AS updated_at,
     (q.__deleted = 'true')                             AS is_deleted,
     q.__source_ts_ms                                   AS _version
-FROM beezap.users_queue q
-LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+FROM beezap.users_queue q;
 

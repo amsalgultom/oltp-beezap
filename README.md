@@ -53,46 +53,96 @@ analytics-beezap/
 - Network connectivity:
   - new server → Server A `xx.xx.x.93:5432` (Postgres)
   - new server → Server B `xx.xx.8.60:9092` (Kafka)
-- Admin access to Server A (to run SQL as a superuser and edit
-  `postgresql.conf` / `pg_hba.conf`) and to Server B (to add one firewall
-  rule). Both are done manually, following the steps below.
+- Admin access to Server A (shell access to its `docker-compose.yml`/Postgres
+  container, to run SQL as a superuser and adjust replication settings /
+  `pg_hba.conf`) and to Server B (to add one firewall rule). Both are done
+  manually, following the steps below.
 - This repo copied onto the new server (e.g. `git clone` or `scp -r`).
 
 ---
 
 ## Step 1 — Server A: enable logical replication & create the CDC role
 
-1. Edit `postgresql.conf`:
-   ```
-   wal_level = logical
-   max_replication_slots = 10   # default is usually fine, must be >= 4
-   max_wal_senders        = 10   # default is usually fine, must be >= 4
-   ```
-   `wal_level` requires a **PostgreSQL restart** (a `reload` is not enough) —
-   schedule a maintenance window.
+**Server A's PostgreSQL runs via Docker Compose.** Steps 2-4 below use plain
+`docker exec <pg_container>` (works from any directory, targets the
+container directly — replace `<pg_container>` with the actual container name,
+e.g. `db_postgres`, from `docker ps`). Step 1 edits `docker-compose.yml`
+itself, so it must be run from the directory containing that file (and uses
+the **service name**, e.g. `postgres`, not the container name).
 
-2. Edit `pg_hba.conf` to allow the new server (replace `<NEW_SERVER_IP>`):
+1. Set `wal_level = logical` (and the replication slot/sender limits) by
+   adding a `command:` override to the Postgres service in Server A's
+   `docker-compose.yml`. This works for any Postgres-based image and
+   overrides whatever is in `postgresql.conf`:
+   ```yaml
+   services:
+     postgres:                  # service name — check with `docker compose ps`
+       image: postgres:16        # whatever image is already in use — don't change it
+       command:
+         - postgres
+         - -c
+         - wal_level=logical
+         - -c
+         - max_replication_slots=10
+         - -c
+         - max_wal_senders=10
+       # ... keep existing volumes / environment / ports / networks as-is
    ```
-   host    beezap          debezium        <NEW_SERVER_IP>/32   scram-sha-256
-   host    replication     debezium        <NEW_SERVER_IP>/32   scram-sha-256
+   Apply it — this **recreates/restarts the container**, which is required
+   for `wal_level` to take effect (schedule a maintenance window). Run from
+   the directory containing this `docker-compose.yml`:
+   ```bash
+   docker compose up -d postgres
    ```
-   Then `SELECT pg_reload_conf();` (no restart needed for `pg_hba.conf`).
+   If Server A already bind-mounts a custom `postgresql.conf` from the host,
+   you can instead set the same three settings there and run
+   `docker compose restart postgres` — either approach works.
+
+2. Edit `pg_hba.conf` to allow the new server (replace `<NEW_SERVER_IP>` and
+   `<pg_container>`). For the official `postgres` image, `pg_hba.conf` lives
+   inside the data volume at `/var/lib/postgresql/data/pg_hba.conf`:
+   ```bash
+   docker exec <pg_container> bash -c \
+     "echo 'host    beezap          debezium        <NEW_SERVER_IP>/32   scram-sha-256' >> /var/lib/postgresql/data/pg_hba.conf && \
+      echo 'host    replication     debezium        <NEW_SERVER_IP>/32   scram-sha-256' >> /var/lib/postgresql/data/pg_hba.conf"
+   ```
+   Verify the lines were appended:
+   ```bash
+   docker exec <pg_container> tail -3 /var/lib/postgresql/data/pg_hba.conf
+   ```
+   Then reload (no restart needed for `pg_hba.conf`):
+   ```bash
+   docker exec <pg_container> psql -U <superuser> -d beezap -c "SELECT pg_reload_conf();"
+   ```
 
 3. Open `postgres/01_logical_replication_setup.sql`, set a strong password in
    place of `CHANGE_ME_STRONG_PASSWORD`, and remember it for `.env`
-   (`DEBEZIUM_DB_PASSWORD`) in Step 3. Run the script as a superuser:
+   (`DEBEZIUM_DB_PASSWORD`) in Step 3. Copy the file into the Postgres
+   container and run it as a superuser:
+   ```bash
+   docker cp postgres/01_logical_replication_setup.sql <pg_container>:/tmp/cdc_setup.sql
+   docker exec <pg_container> psql -U <superuser> -d beezap -f /tmp/cdc_setup.sql
    ```
-   psql -h xx.xx.x.93 -U <superuser> -d beezap -f postgres/01_logical_replication_setup.sql
-   ```
+   (Equivalently, pipe it in without copying:
+   `docker exec -i <pg_container> psql -U <superuser> -d beezap < postgres/01_logical_replication_setup.sql`)
+
    This creates the `debezium` replication role, grants `SELECT` on
    `public` and every existing `tenant_*` schema, and creates
    `CREATE PUBLICATION beezap_cdc FOR ALL TABLES`.
 
 4. Verify (queries are also at the bottom of the SQL file):
-   ```sql
-   SHOW wal_level;                                            -- logical
-   SELECT pubname, puballtables FROM pg_publication;          -- beezap_cdc | t
-   SELECT rolname, rolreplication FROM pg_roles WHERE rolname = 'debezium';
+   ```bash
+   docker exec <pg_container> psql -U <superuser> -d beezap -c "SHOW wal_level;"
+   docker exec <pg_container> psql -U <superuser> -d beezap -c "SELECT pubname, puballtables FROM pg_publication;"
+   docker exec <pg_container> psql -U <superuser> -d beezap -c "SELECT rolname, rolreplication FROM pg_roles WHERE rolname = 'debezium';"
+   ```
+   Expected: `wal_level = logical`, `beezap_cdc | t`, `debezium | t`.
+
+5. Make sure port 5432 is published from the container to the host (`ports:
+   - "5432:5432"` in Server A's `docker-compose.yml`), and that Server A's
+   host firewall allows the new server's IP on 5432, e.g.:
+   ```bash
+   sudo ufw allow from <NEW_SERVER_IP> to any port 5432 proto tcp
    ```
 
 ### A note on `public.tenants` and `tenant_*.users` sensitive columns

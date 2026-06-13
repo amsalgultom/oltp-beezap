@@ -44,7 +44,7 @@ BEGIN
 END
 $$;
 
-GRANT CONNECT ON DATABASE beezap TO debezium;
+GRANT CONNECT ON DATABASE whatsapp_multi_tenant TO debezium;
 
 
 -- ----------------------------------------------------------------------------

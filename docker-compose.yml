@@ -4,7 +4,7 @@ services:
   # Connects out to Server A (Postgres) and Server B (Kafka) over the network.
   # --------------------------------------------------------------------------
   kafka-connect:
-    image: debezium/connect:2.7
+    image: debezium/connect:2.7.3.Final
     container_name: beezap-kafka-connect
     restart: unless-stopped
     ports:

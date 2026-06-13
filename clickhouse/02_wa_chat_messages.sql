@@ -109,7 +109,10 @@ ORDER BY (tenant_id, created_at, id);
 -- ----------------------------------------------------------------------------
 CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.wa_chat_messages_mv TO beezap.wa_chat_messages AS
 SELECT
-    coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
+    if(empty(q.__source_schema),
+        toUUID('00000000-0000-0000-0000-000000000000'),
+        coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))
+    ) AS tenant_id,
     toUUID(q.id)                                       AS id,
     toUUID(q.contact_id)                               AS contact_id,
     q.message_id,

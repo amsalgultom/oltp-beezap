@@ -8,25 +8,25 @@
 -- ----------------------------------------------------------------------------
 -- Per-entity "latest, non-deleted row" views
 -- ----------------------------------------------------------------------------
-CREATE VIEW beezap.v_tenants AS
+CREATE OR REPLACE VIEW beezap.v_tenants AS
 SELECT * FROM beezap.tenants FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_users AS
+CREATE OR REPLACE VIEW beezap.v_users AS
 SELECT * FROM beezap.users FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_wa_chat_messages AS
+CREATE OR REPLACE VIEW beezap.v_wa_chat_messages AS
 SELECT * FROM beezap.wa_chat_messages FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_wa_chat_contacts AS
+CREATE OR REPLACE VIEW beezap.v_wa_chat_contacts AS
 SELECT * FROM beezap.wa_chat_contacts FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_user_sessions AS
+CREATE OR REPLACE VIEW beezap.v_user_sessions AS
 SELECT * FROM beezap.user_sessions FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_contact_results AS
+CREATE OR REPLACE VIEW beezap.v_contact_results AS
 SELECT * FROM beezap.contact_results FINAL WHERE is_deleted = 0;
 
-CREATE VIEW beezap.v_contact_results_history AS
+CREATE OR REPLACE VIEW beezap.v_contact_results_history AS
 SELECT * FROM beezap.contact_results_history FINAL WHERE is_deleted = 0;
 
 
@@ -35,7 +35,7 @@ SELECT * FROM beezap.contact_results_history FINAL WHERE is_deleted = 0;
 -- Daily counts of messages by tenant / campaign / category / sender / status.
 -- e.g. sent vs delivered vs read vs failed, per campaign, per day.
 -- ----------------------------------------------------------------------------
-CREATE VIEW beezap.v_message_delivery_funnel AS
+CREATE OR REPLACE VIEW beezap.v_message_delivery_funnel AS
 SELECT
     m.tenant_id,
     t.name AS tenant_name,
@@ -74,7 +74,7 @@ ON m.tenant_id = t.tenant_id;
 -- Analytics view: contact growth
 -- Daily new-contact counts by tenant / campaign / service_type / handle_by.
 -- ----------------------------------------------------------------------------
-CREATE VIEW beezap.v_contact_growth AS
+CREATE OR REPLACE VIEW beezap.v_contact_growth AS
 SELECT
     c.tenant_id,
     t.name AS tenant_name,
@@ -113,7 +113,7 @@ ON c.tenant_id = t.tenant_id;
 -- "Online seconds" approximates each session's duration as
 -- logout_time (or, if still open, last_activity) minus login_time.
 -- ----------------------------------------------------------------------------
-CREATE VIEW beezap.v_agent_sessions AS
+CREATE OR REPLACE VIEW beezap.v_agent_sessions AS
 SELECT
     s.tenant_id,
     t.name AS tenant_name,

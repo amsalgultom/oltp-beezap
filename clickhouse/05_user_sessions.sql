@@ -1,11 +1,11 @@
--- ============================================================================
--- Beezap analytics — user_sessions (agent login/logout / online tracking)
+﻿-- ============================================================================
+-- Beezap analytics â€” user_sessions (agent login/logout / online tracking)
 -- Source: tenant_*.user_sessions (unified topic cdc.user_sessions)
 -- ============================================================================
 -- "Online" = is_online = true AND last_activity within the app's heartbeat
 -- window (see source schema doc). Powers agent-activity dashboards.
 
-CREATE TABLE beezap.user_sessions_queue
+CREATE TABLE IF NOT EXISTS beezap.user_sessions_queue
 (
     id              String,
     user_id         Int32,
@@ -35,7 +35,7 @@ SETTINGS
     kafka_num_consumers = 1,
     kafka_skip_broken_messages = 1000;
 
-CREATE TABLE beezap.user_sessions
+CREATE TABLE IF NOT EXISTS beezap.user_sessions
 (
     tenant_id       UUID,
     id              UUID,
@@ -59,7 +59,7 @@ ENGINE = ReplacingMergeTree(_version)
 PARTITION BY toYYYYMM(login_time)
 ORDER BY (tenant_id, login_time, id);
 
-CREATE MATERIALIZED VIEW beezap.user_sessions_mv TO beezap.user_sessions AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.user_sessions_mv TO beezap.user_sessions AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     toUUID(q.id)                                       AS id,
@@ -79,3 +79,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.user_sessions_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

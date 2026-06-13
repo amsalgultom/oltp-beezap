@@ -1,12 +1,12 @@
--- ============================================================================
--- Beezap analytics — contact_results (latest "Final" report per contact)
+﻿-- ============================================================================
+-- Beezap analytics â€” contact_results (latest "Final" report per contact)
 -- Source: tenant_*.contact_results (unified topic cdc.contact_results)
 -- ============================================================================
 -- `results` holds the structured outcome/report payload as JSON text and is
 -- kept as-is (String) so Superset/ClickHouse JSON functions (JSONExtract*)
 -- can be used to slice by whatever fields the report form defines.
 
-CREATE TABLE beezap.contact_results_queue
+CREATE TABLE IF NOT EXISTS beezap.contact_results_queue
 (
     id          String,
     contact_id  String,
@@ -30,7 +30,7 @@ SETTINGS
     kafka_num_consumers = 1,
     kafka_skip_broken_messages = 1000;
 
-CREATE TABLE beezap.contact_results
+CREATE TABLE IF NOT EXISTS beezap.contact_results
 (
     tenant_id   UUID,
     id          UUID,
@@ -47,7 +47,7 @@ CREATE TABLE beezap.contact_results
 ENGINE = ReplacingMergeTree(_version)
 ORDER BY (tenant_id, contact_id, id);
 
-CREATE MATERIALIZED VIEW beezap.contact_results_mv TO beezap.contact_results AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.contact_results_mv TO beezap.contact_results AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     toUUID(q.id)                                       AS id,
@@ -61,3 +61,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.contact_results_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

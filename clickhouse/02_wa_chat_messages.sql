@@ -1,5 +1,5 @@
--- ============================================================================
--- Beezap analytics — wa_chat_messages (the core message-delivery fact table)
+﻿-- ============================================================================
+-- Beezap analytics â€” wa_chat_messages (the core message-delivery fact table)
 -- Source: tenant_*.wa_chat_messages (unified topic cdc.wa_chat_messages)
 -- ============================================================================
 -- This file is the fully worked-out example of the per-entity pattern used
@@ -13,10 +13,10 @@
 --   <entity>        (ReplacingMergeTree, deduplicated "current state")
 --
 -- Columns intentionally NOT replicated (excluded via the Debezium connector's
--- column.exclude.list — see kafka-connect/connectors/beezap-postgres-cdc.json):
+-- column.exclude.list â€” see kafka-connect/connectors/beezap-postgres-cdc.json):
 --   content, media_url, media_filename, meta_data, error_message,
 --   template_parameters, attachment, link_file, bot_response
--- These are message bodies / raw media / free-text error data — large,
+-- These are message bodies / raw media / free-text error data â€” large,
 -- potentially sensitive, and not needed for delivery-funnel / campaign /
 -- agent analytics. If you need them later, add the columns back to
 -- table.include.list exclusions AND to the queue/target tables + MV below.
@@ -24,7 +24,7 @@
 -- ----------------------------------------------------------------------------
 -- Raw Kafka ingestion table
 -- ----------------------------------------------------------------------------
-CREATE TABLE beezap.wa_chat_messages_queue
+CREATE TABLE IF NOT EXISTS beezap.wa_chat_messages_queue
 (
     id                  String,
     contact_id          String,
@@ -67,7 +67,7 @@ SETTINGS
 -- ----------------------------------------------------------------------------
 -- Deduplicated target table (latest version per message)
 -- ----------------------------------------------------------------------------
-CREATE TABLE beezap.wa_chat_messages
+CREATE TABLE IF NOT EXISTS beezap.wa_chat_messages
 (
     tenant_id           UUID,
     id                  UUID,
@@ -107,7 +107,7 @@ ORDER BY (tenant_id, created_at, id);
 -- If a slug doesn't exist in tenants (shouldn't happen), uses all-zero UUID
 -- as a fallback for data integrity.
 -- ----------------------------------------------------------------------------
-CREATE MATERIALIZED VIEW beezap.wa_chat_messages_mv TO beezap.wa_chat_messages AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.wa_chat_messages_mv TO beezap.wa_chat_messages AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     toUUID(q.id)                                       AS id,
@@ -137,3 +137,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.wa_chat_messages_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

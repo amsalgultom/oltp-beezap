@@ -1,5 +1,5 @@
--- ============================================================================
--- Beezap analytics — users (per-tenant agents/operators)
+﻿-- ============================================================================
+-- Beezap analytics â€” users (per-tenant agents/operators)
 -- Source: tenant_*.users (unified topic cdc.users)
 -- ============================================================================
 -- Small dimension table used to enrich agent-performance dashboards (joins
@@ -7,7 +7,7 @@
 -- Columns intentionally NOT replicated (excluded via column.exclude.list):
 -- password, meta_data.
 
-CREATE TABLE beezap.users_queue
+CREATE TABLE IF NOT EXISTS beezap.users_queue
 (
     id          Int32,
     username    String,
@@ -34,7 +34,7 @@ SETTINGS
     kafka_num_consumers = 1,
     kafka_skip_broken_messages = 1000;
 
-CREATE TABLE beezap.users
+CREATE TABLE IF NOT EXISTS beezap.users
 (
     tenant_id   UUID,
     id          Int32,
@@ -54,7 +54,7 @@ CREATE TABLE beezap.users
 ENGINE = ReplacingMergeTree(_version)
 ORDER BY (tenant_id, id);
 
-CREATE MATERIALIZED VIEW beezap.users_mv TO beezap.users AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.users_mv TO beezap.users AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     q.id,
@@ -71,3 +71,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.users_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

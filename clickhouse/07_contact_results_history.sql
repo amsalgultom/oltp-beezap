@@ -1,13 +1,13 @@
--- ============================================================================
--- Beezap analytics — contact_results_history (append-only submission history)
+﻿-- ============================================================================
+-- Beezap analytics â€” contact_results_history (append-only submission history)
 -- Source: tenant_*.contact_results_history (unified topic cdc.contact_results_history)
 -- ============================================================================
 -- One row per save/submit event. ReplacingMergeTree (keyed on id, versioned
 -- by _version) is used even though the source table is append-only, purely
--- to dedupe in case Kafka redelivers a message (at-least-once delivery) —
+-- to dedupe in case Kafka redelivers a message (at-least-once delivery) â€”
 -- it keeps the same pattern/views uniform across all entities.
 
-CREATE TABLE beezap.contact_results_history_queue
+CREATE TABLE IF NOT EXISTS beezap.contact_results_history_queue
 (
     id          String,
     contact_id  String,
@@ -29,7 +29,7 @@ SETTINGS
     kafka_num_consumers = 1,
     kafka_skip_broken_messages = 1000;
 
-CREATE TABLE beezap.contact_results_history
+CREATE TABLE IF NOT EXISTS beezap.contact_results_history
 (
     tenant_id   UUID,
     id          UUID,
@@ -45,7 +45,7 @@ ENGINE = ReplacingMergeTree(_version)
 PARTITION BY toYYYYMM(created_at)
 ORDER BY (tenant_id, contact_id, created_at, id);
 
-CREATE MATERIALIZED VIEW beezap.contact_results_history_mv TO beezap.contact_results_history AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.contact_results_history_mv TO beezap.contact_results_history AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     toUUID(q.id)                                       AS id,
@@ -57,3 +57,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.contact_results_history_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

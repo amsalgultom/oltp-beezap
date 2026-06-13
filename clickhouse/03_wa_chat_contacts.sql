@@ -1,12 +1,12 @@
--- ============================================================================
--- Beezap analytics — wa_chat_contacts (conversation/contact state)
+﻿-- ============================================================================
+-- Beezap analytics â€” wa_chat_contacts (conversation/contact state)
 -- Source: tenant_*.wa_chat_contacts (unified topic cdc.wa_chat_contacts)
 -- ============================================================================
 -- Same pattern as 02_wa_chat_messages.sql. Columns intentionally NOT
 -- replicated (excluded via column.exclude.list): meta_data, last_message
 -- (free-text message content).
 
-CREATE TABLE beezap.wa_chat_contacts_queue
+CREATE TABLE IF NOT EXISTS beezap.wa_chat_contacts_queue
 (
     id                  String,
     phone               String,
@@ -46,7 +46,7 @@ SETTINGS
     kafka_num_consumers = 1,
     kafka_skip_broken_messages = 1000;
 
-CREATE TABLE beezap.wa_chat_contacts
+CREATE TABLE IF NOT EXISTS beezap.wa_chat_contacts
 (
     tenant_id           UUID,
     id                  UUID,
@@ -80,7 +80,7 @@ ENGINE = ReplacingMergeTree(_version)
 PARTITION BY toYYYYMM(created_at)
 ORDER BY (tenant_id, created_at, id);
 
-CREATE MATERIALIZED VIEW beezap.wa_chat_contacts_mv TO beezap.wa_chat_contacts AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.wa_chat_contacts_mv TO beezap.wa_chat_contacts AS
 SELECT
     coalesce(t.id, toUUID('00000000-0000-0000-0000-000000000000'))  AS tenant_id,
     toUUID(q.id)                                       AS id,
@@ -110,3 +110,4 @@ SELECT
     q.__source_ts_ms                                   AS _version
 FROM beezap.wa_chat_contacts_queue q
 LEFT JOIN beezap.tenants t ON t.slug = beezap_tenant_id(q.__source_schema);
+

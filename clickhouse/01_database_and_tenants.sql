@@ -12,7 +12,7 @@ CREATE DATABASE IF NOT EXISTS beezap;
 -- ----------------------------------------------------------------------------
 -- Raw Kafka ingestion table
 -- ----------------------------------------------------------------------------
-CREATE TABLE beezap.tenants_queue
+CREATE TABLE IF NOT EXISTS beezap.tenants_queue
 (
     id          String,
     name        String,
@@ -40,7 +40,7 @@ SETTINGS
 -- ----------------------------------------------------------------------------
 -- Deduplicated target table (latest version per tenant)
 -- ----------------------------------------------------------------------------
-CREATE TABLE beezap.tenants
+CREATE TABLE IF NOT EXISTS beezap.tenants
 (
     id          UUID,
     name        String,
@@ -60,7 +60,7 @@ ORDER BY (id);
 -- ----------------------------------------------------------------------------
 -- Materialized view: queue -> target
 -- ----------------------------------------------------------------------------
-CREATE MATERIALIZED VIEW beezap.tenants_mv TO beezap.tenants AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS beezap.tenants_mv TO beezap.tenants AS
 SELECT
     toUUID(id)                                       AS id,
     name,

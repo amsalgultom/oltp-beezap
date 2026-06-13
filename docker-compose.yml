@@ -65,16 +65,6 @@ services:
       - superset-db-data:/var/lib/postgresql/data
 
   # --------------------------------------------------------------------------
-  # Redis — Superset result/data/filter caches
-  # --------------------------------------------------------------------------
-  redis:
-    image: redis:7-alpine
-    container_name: beezap-redis
-    restart: unless-stopped
-    volumes:
-      - redis-data:/data
-
-  # --------------------------------------------------------------------------
   # Superset — dashboards on top of ClickHouse
   # --------------------------------------------------------------------------
   superset:
@@ -83,7 +73,6 @@ services:
     restart: unless-stopped
     depends_on:
       - superset-db
-      - redis
       - clickhouse
     ports:
       - "8088:8088"
@@ -94,8 +83,8 @@ services:
       SUPERSET_DB_USER: ${SUPERSET_DB_USER:-superset}
       SUPERSET_DB_PASSWORD: ${SUPERSET_DB_PASSWORD}
       SUPERSET_DB_NAME: ${SUPERSET_DB_NAME:-superset}
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
+      REDIS_URL: ${REDIS_URL}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
       - superset-home:/app/superset_home
 
@@ -103,4 +92,3 @@ volumes:
   clickhouse-data:
   superset-db-data:
   superset-home:
-  redis-data:

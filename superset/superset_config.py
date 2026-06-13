@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse
 
 # ============================================================================
 # Beezap analytics — Superset configuration
@@ -7,6 +8,13 @@ import os
 # ============================================================================
 
 SECRET_KEY = os.environ["SUPERSET_SECRET_KEY"]
+
+# Parse external Redis URL (format: redis://host:port/db)
+_redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+_redis_parsed = urlparse(_redis_url)
+_redis_host = _redis_parsed.hostname or "localhost"
+_redis_port = int(_redis_parsed.port or 6379)
+_redis_password = os.environ.get("REDIS_PASSWORD")
 
 # ----------------------------------------------------------------------------
 # Superset's own metadata database (separate from the Beezap OLTP Postgres
@@ -24,16 +32,16 @@ SQLALCHEMY_DATABASE_URI = (
 
 # ----------------------------------------------------------------------------
 # Redis-backed caches (results cache, filter state, explore form data)
+# Connects to external Redis at _redis_host:_redis_port
+# Each cache type uses a separate DB number (1, 2, 3)
 # ----------------------------------------------------------------------------
-REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
-REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
-
 CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 300,
     "CACHE_KEY_PREFIX": "superset_results_",
-    "CACHE_REDIS_HOST": REDIS_HOST,
-    "CACHE_REDIS_PORT": REDIS_PORT,
+    "CACHE_REDIS_HOST": _redis_host,
+    "CACHE_REDIS_PORT": _redis_port,
+    "CACHE_REDIS_PASSWORD": _redis_password,
     "CACHE_REDIS_DB": 1,
 }
 DATA_CACHE_CONFIG = CACHE_CONFIG
@@ -42,8 +50,9 @@ FILTER_STATE_CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 86400,
     "CACHE_KEY_PREFIX": "superset_filter_",
-    "CACHE_REDIS_HOST": REDIS_HOST,
-    "CACHE_REDIS_PORT": REDIS_PORT,
+    "CACHE_REDIS_HOST": _redis_host,
+    "CACHE_REDIS_PORT": _redis_port,
+    "CACHE_REDIS_PASSWORD": _redis_password,
     "CACHE_REDIS_DB": 2,
 }
 
@@ -51,8 +60,9 @@ EXPLORE_FORM_DATA_CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 86400,
     "CACHE_KEY_PREFIX": "superset_form_data_",
-    "CACHE_REDIS_HOST": REDIS_HOST,
-    "CACHE_REDIS_PORT": REDIS_PORT,
+    "CACHE_REDIS_HOST": _redis_host,
+    "CACHE_REDIS_PORT": _redis_port,
+    "CACHE_REDIS_PASSWORD": _redis_password,
     "CACHE_REDIS_DB": 3,
 }
 

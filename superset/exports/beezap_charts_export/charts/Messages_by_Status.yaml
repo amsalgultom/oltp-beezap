@@ -1,0 +1,29 @@
+slice_name: Messages by Status
+viz_type: pie
+cache_timeout: null
+uuid: 8a243f80-a609-4d32-859c-9d9a1e6e1011
+version: 1.0.0
+dataset_uuid: 230fd9f1-4680-4d79-94b8-ba70658037b3
+query_context: null
+params:
+  viz_type: pie
+  groupby:
+    - status
+  metric: count
+  adhoc_filters: []
+  row_limit: 10
+  sort_by_metric: true
+  time_range: No filter
+  color_scheme: supersetColors
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  label_type: key_percent
+  number_format: SMART_NUMBER
+  date_format: smart_date
+  show_labels: true
+  labels_outside: true
+  donut: false
+  innerRadius: 30
+  outerRadius: 70
+  extra_form_data: {}

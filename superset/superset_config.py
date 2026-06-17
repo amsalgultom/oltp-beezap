@@ -72,3 +72,25 @@ EXPLORE_FORM_DATA_CACHE_CONFIG = {
 # Beezap's ClickHouse data refreshes continuously via Kafka; keep chart-level
 # caching short so dashboards reflect near-real-time data.
 SQLLAB_CTAS_NO_LIMIT = True
+
+# ----------------------------------------------------------------------------
+# Embedding — required for the Next.js analytics dashboard
+# ----------------------------------------------------------------------------
+FEATURE_FLAGS = {
+    "EMBEDDED_SUPERSET": True,
+}
+
+# Allow the Next.js app to embed dashboards via guest tokens.
+# Set this to the exact origin of the Next.js frontend.
+CORS_OPTIONS = {
+    "supports_credentials": True,
+    "allow_headers": ["*"],
+    "resources": ["*"],
+    "origins": [os.environ.get("NEXTJS_APP_URL", "http://localhost:3000")],
+}
+
+# Guest token JWT secret — must match NEXTAUTH_SECRET in .env.local (or use its own)
+GUEST_TOKEN_JWT_SECRET = os.environ.get("SUPERSET_GUEST_TOKEN_SECRET", SECRET_KEY)
+GUEST_TOKEN_JWT_ALGO = "HS256"
+GUEST_TOKEN_HEADER_NAME = "X-GuestToken"
+GUEST_TOKEN_JWT_EXP_SECONDS = 300  # 5 minutes — frontend refreshes automatically

@@ -1,0 +1,351 @@
+dashboard_title: Beezap Overview
+description: null
+css: null
+slug: null
+uuid: ff5c1526-0001-442a-8a09-58d0d08671ac
+version: 1.0.0
+metadata:
+  color_scheme: ''
+  refresh_frequency: 0
+  timed_refresh_immune_slices: []
+  expanded_slices: {}
+  default_filters: '{}'
+  filter_scopes: {}
+position:
+  DASHBOARD_VERSION_KEY: v2
+  ROOT_ID:
+    type: ROOT
+    id: ROOT_ID
+    children:
+      - GRID_ID
+  GRID_ID:
+    type: GRID
+    id: GRID_ID
+    parents:
+      - ROOT_ID
+    children:
+      - ROW-msg-header
+      - ROW-messages-kpi
+      - ROW-message-volume
+      - ROW-delivery-funnel
+      - ROW-contact-header
+      - ROW-contacts-kpi
+      - ROW-contact-growth
+      - ROW-agent-header
+      - ROW-agent-sessions
+      - ROW-agent-online-time
+  HEADER_ID:
+    type: HEADER
+    id: HEADER_ID
+    children: []
+    meta:
+      text: Beezap Overview
+  ROW-msg-header:
+    type: ROW
+    id: ROW-msg-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - MARKDOWN-msg-header
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  MARKDOWN-msg-header:
+    type: MARKDOWN
+    id: MARKDOWN-msg-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-msg-header
+    children: []
+    meta:
+      width: 12
+      height: 8
+      code: '## Messages'
+  ROW-messages-kpi:
+    type: ROW
+    id: ROW-messages-kpi
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-total-messages
+      - CHART-messages-by-status
+      - CHART-messages-by-category
+      - CHART-messages-by-type
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-total-messages:
+    type: CHART
+    id: CHART-total-messages
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-messages-kpi
+    children: []
+    meta:
+      width: 3
+      height: 50
+      chartId: 0
+      uuid: fd3076f5-548c-40ec-aed6-602b19cb2846
+      sliceName: Total Messages
+  CHART-messages-by-status:
+    type: CHART
+    id: CHART-messages-by-status
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-messages-kpi
+    children: []
+    meta:
+      width: 3
+      height: 50
+      chartId: 0
+      uuid: 8a243f80-a609-4d32-859c-9d9a1e6e1011
+      sliceName: Messages by Status
+  CHART-messages-by-category:
+    type: CHART
+    id: CHART-messages-by-category
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-messages-kpi
+    children: []
+    meta:
+      width: 3
+      height: 50
+      chartId: 0
+      uuid: e74b4a75-ffd7-4bfe-b729-dce4706f9e5f
+      sliceName: Messages by Category
+  CHART-messages-by-type:
+    type: CHART
+    id: CHART-messages-by-type
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-messages-kpi
+    children: []
+    meta:
+      width: 3
+      height: 50
+      chartId: 0
+      uuid: d629aa86-d9b8-4769-b3e4-01df692f42e2
+      sliceName: Messages by Type
+  ROW-message-volume:
+    type: ROW
+    id: ROW-message-volume
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-daily-message-volume
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-daily-message-volume:
+    type: CHART
+    id: CHART-daily-message-volume
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-message-volume
+    children: []
+    meta:
+      width: 12
+      height: 50
+      chartId: 0
+      uuid: a81a1eb8-a4a4-4b0d-ac96-3761a92c71c6
+      sliceName: Daily Message Volume by Tenant
+  ROW-delivery-funnel:
+    type: ROW
+    id: ROW-delivery-funnel
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-delivery-funnel
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-delivery-funnel:
+    type: CHART
+    id: CHART-delivery-funnel
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-delivery-funnel
+    children: []
+    meta:
+      width: 12
+      height: 50
+      chartId: 0
+      uuid: 6c9ccaff-6820-4329-abe1-9c3d9f061829
+      sliceName: Message Delivery Funnel
+  ROW-contact-header:
+    type: ROW
+    id: ROW-contact-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - MARKDOWN-contact-header
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  MARKDOWN-contact-header:
+    type: MARKDOWN
+    id: MARKDOWN-contact-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-contact-header
+    children: []
+    meta:
+      width: 12
+      height: 8
+      code: '## Contacts'
+  ROW-contacts-kpi:
+    type: ROW
+    id: ROW-contacts-kpi
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-total-contacts
+      - CHART-contacts-by-service-type
+      - CHART-contacts-by-handle-by
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-total-contacts:
+    type: CHART
+    id: CHART-total-contacts
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-contacts-kpi
+    children: []
+    meta:
+      width: 3
+      height: 50
+      chartId: 0
+      uuid: 53dd4f47-a160-45a5-8aaa-2d82cdff9596
+      sliceName: Total Contacts
+  CHART-contacts-by-service-type:
+    type: CHART
+    id: CHART-contacts-by-service-type
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-contacts-kpi
+    children: []
+    meta:
+      width: 4
+      height: 50
+      chartId: 0
+      uuid: 9c739c7d-234a-4edb-ab42-efc9d1370101
+      sliceName: New Contacts by Service Type
+  CHART-contacts-by-handle-by:
+    type: CHART
+    id: CHART-contacts-by-handle-by
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-contacts-kpi
+    children: []
+    meta:
+      width: 5
+      height: 50
+      chartId: 0
+      uuid: 78bfed06-9677-4a47-9a4e-a178f6b09d88
+      sliceName: New Contacts by Handle By
+  ROW-contact-growth:
+    type: ROW
+    id: ROW-contact-growth
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-contact-growth
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-contact-growth:
+    type: CHART
+    id: CHART-contact-growth
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-contact-growth
+    children: []
+    meta:
+      width: 12
+      height: 50
+      chartId: 0
+      uuid: 6d94bb9b-6891-4864-820b-1e24a62e736d
+      sliceName: Contact Growth Over Time
+  ROW-agent-header:
+    type: ROW
+    id: ROW-agent-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - MARKDOWN-agent-header
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  MARKDOWN-agent-header:
+    type: MARKDOWN
+    id: MARKDOWN-agent-header
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-agent-header
+    children: []
+    meta:
+      width: 12
+      height: 8
+      code: '## Agents'
+  ROW-agent-sessions:
+    type: ROW
+    id: ROW-agent-sessions
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-agent-sessions
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-agent-sessions:
+    type: CHART
+    id: CHART-agent-sessions
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-agent-sessions
+    children: []
+    meta:
+      width: 12
+      height: 50
+      chartId: 0
+      uuid: fcd2d9ed-db36-446c-aeab-bfa4b916af87
+      sliceName: Agent Session Activity
+  ROW-agent-online-time:
+    type: ROW
+    id: ROW-agent-online-time
+    parents:
+      - ROOT_ID
+      - GRID_ID
+    children:
+      - CHART-agent-online-time
+    meta:
+      background: BACKGROUND_TRANSPARENT
+  CHART-agent-online-time:
+    type: CHART
+    id: CHART-agent-online-time
+    parents:
+      - ROOT_ID
+      - GRID_ID
+      - ROW-agent-online-time
+    children: []
+    meta:
+      width: 12
+      height: 50
+      chartId: 0
+      uuid: e9d969a6-f3b8-439d-83b9-1c14401bd9da
+      sliceName: Online Time by Agent

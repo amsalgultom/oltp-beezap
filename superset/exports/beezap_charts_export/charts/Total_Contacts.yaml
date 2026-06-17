@@ -1,0 +1,26 @@
+slice_name: Total Contacts
+viz_type: big_number
+cache_timeout: null
+uuid: 53dd4f47-a160-45a5-8aaa-2d82cdff9596
+version: 1.0.0
+dataset_uuid: f4d7b6b6-2b19-47e1-9328-cea81179d0c0
+query_context: null
+params:
+  viz_type: big_number
+  metric: count
+  granularity_sqla: created_at
+  time_grain_sqla: P1D
+  adhoc_filters: []
+  time_range: No filter
+  y_axis_format: SMART_NUMBER
+  header_font_size: 0.4
+  subheader_font_size: 0.15
+  comparison_type: values
+  show_trend_line: true
+  start_y_axis_at_zero: true
+  color_picker:
+    r: 0
+    g: 122
+    b: 135
+    a: 1
+  extra_form_data: {}

@@ -1,0 +1,29 @@
+slice_name: New Contacts by Service Type
+viz_type: pie
+cache_timeout: null
+uuid: 9c739c7d-234a-4edb-ab42-efc9d1370101
+version: 1.0.0
+dataset_uuid: 8420b8af-49b0-43d2-929b-fe76be668858
+query_context: null
+params:
+  viz_type: pie
+  groupby:
+    - service_type
+  metric: sum__new_contacts
+  adhoc_filters: []
+  row_limit: 10
+  sort_by_metric: true
+  time_range: No filter
+  color_scheme: supersetColors
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  label_type: key_percent
+  number_format: SMART_NUMBER
+  date_format: smart_date
+  show_labels: true
+  labels_outside: true
+  donut: false
+  innerRadius: 30
+  outerRadius: 70
+  extra_form_data: {}

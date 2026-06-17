@@ -1,0 +1,27 @@
+slice_name: Online Time by Agent
+viz_type: dist_bar
+cache_timeout: null
+uuid: e9d969a6-f3b8-439d-83b9-1c14401bd9da
+version: 1.0.0
+dataset_uuid: cb980534-3096-4e98-ad02-1ea858495c23
+query_context: null
+params:
+  viz_type: dist_bar
+  metrics:
+    - sum__online_seconds
+  groupby:
+    - username
+  adhoc_filters: []
+  row_limit: 100
+  order_desc: true
+  time_range: No filter
+  color_scheme: supersetColors
+  show_legend: true
+  y_axis_format: SMART_NUMBER
+  bar_stacked: false
+  show_bar_value: false
+  order_bars: false
+  reduce_x_ticks: false
+  show_controls: false
+  x_ticks_layout: flat
+  extra_form_data: {}

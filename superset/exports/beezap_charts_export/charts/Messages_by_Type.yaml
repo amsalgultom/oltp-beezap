@@ -1,0 +1,29 @@
+slice_name: Messages by Type
+viz_type: pie
+cache_timeout: null
+uuid: d629aa86-d9b8-4769-b3e4-01df692f42e2
+version: 1.0.0
+dataset_uuid: c24584e5-9f52-4d27-a06e-961f8fb98714
+query_context: null
+params:
+  viz_type: pie
+  groupby:
+    - type
+  metric: sum__message_count
+  adhoc_filters: []
+  row_limit: 10
+  sort_by_metric: true
+  time_range: No filter
+  color_scheme: supersetColors
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  label_type: key_percent
+  number_format: SMART_NUMBER
+  date_format: smart_date
+  show_labels: true
+  labels_outside: true
+  donut: false
+  innerRadius: 30
+  outerRadius: 70
+  extra_form_data: {}

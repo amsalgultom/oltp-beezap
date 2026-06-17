@@ -1,0 +1,50 @@
+slice_name: Contact Growth Over Time
+viz_type: echarts_timeseries_line
+cache_timeout: null
+uuid: 6d94bb9b-6891-4864-820b-1e24a62e736d
+version: 1.0.0
+dataset_uuid: 8420b8af-49b0-43d2-929b-fe76be668858
+query_context: null
+params:
+  viz_type: echarts_timeseries_line
+  x_axis: day
+  time_grain_sqla: P1D
+  x_axis_sort_asc: true
+  x_axis_sort_series: name
+  x_axis_sort_series_ascending: true
+  metrics:
+    - sum__new_contacts
+  groupby:
+    - tenant_name
+  adhoc_filters: []
+  order_desc: true
+  row_limit: 10000
+  truncate_metric: true
+  show_empty_periods: false
+  time_range: No filter
+  comparison_type: values
+  annotation_layers: []
+  forecastEnabled: false
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  x_axis_title_margin: 15
+  y_axis_title_margin: 15
+  y_axis_title_position: Left
+  sort_series_type: sum
+  color_scheme: supersetColors
+  seriesType: line
+  opacity: 0.2
+  markerEnabled: false
+  markerSize: 6
+  zoomable: false
+  x_axis_time_format: smart_date
+  y_axis_format: SMART_NUMBER
+  truncateXAxis: true
+  y_axis_bounds:
+    - null
+    - null
+  rich_tooltip: true
+  tooltipTimeFormat: smart_date
+  tooltipSortByMetric: true
+  extra_form_data: {}

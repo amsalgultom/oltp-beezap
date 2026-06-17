@@ -1,0 +1,51 @@
+slice_name: Agent Session Activity
+viz_type: echarts_timeseries_bar
+cache_timeout: null
+uuid: fcd2d9ed-db36-446c-aeab-bfa4b916af87
+version: 1.0.0
+dataset_uuid: cb980534-3096-4e98-ad02-1ea858495c23
+query_context: null
+params:
+  viz_type: echarts_timeseries_bar
+  x_axis: day
+  time_grain_sqla: P1D
+  x_axis_sort_asc: true
+  x_axis_sort_series: name
+  x_axis_sort_series_ascending: true
+  metrics:
+    - sum__session_count
+  groupby:
+    - username
+  adhoc_filters: []
+  order_desc: true
+  row_limit: 10000
+  truncate_metric: true
+  show_empty_periods: false
+  time_range: No filter
+  comparison_type: values
+  annotation_layers: []
+  forecastEnabled: false
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  x_axis_title_margin: 15
+  y_axis_title_margin: 15
+  y_axis_title_position: Left
+  sort_series_type: sum
+  color_scheme: supersetColors
+  seriesType: bar
+  stack: Stack
+  opacity: 0.8
+  markerEnabled: false
+  markerSize: 6
+  zoomable: false
+  x_axis_time_format: smart_date
+  y_axis_format: SMART_NUMBER
+  truncateXAxis: true
+  y_axis_bounds:
+    - null
+    - null
+  rich_tooltip: true
+  tooltipTimeFormat: smart_date
+  tooltipSortByMetric: true
+  extra_form_data: {}

@@ -1,0 +1,338 @@
+table_name: v_wa_chat_messages
+main_dttm_col: created_at
+description: Latest, non-deleted WhatsApp messages (delivery status, sender, category, campaign).
+default_endpoint: null
+offset: 0
+cache_timeout: null
+schema: beezap
+sql: null
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+uuid: 230fd9f1-4680-4d79-94b8-ba70658037b3
+metrics:
+  - metric_name: count
+    verbose_name: COUNT(*)
+    metric_type: count
+    expression: COUNT(*)
+    description: null
+    d3format: null
+    extra: null
+    warning_text: null
+columns:
+  - column_name: tenant_slug
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: id
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: contact_id
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: message_id
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: type
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: sender
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: status
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: media_type
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: sent_by
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: bot_id
+    is_dttm: false
+    is_active: true
+    type: BIGINT
+    groupby: false
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: raw_timestamp
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: created_at
+    is_dttm: true
+    is_active: true
+    type: DATETIME
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: updated_at
+    is_dttm: true
+    is_active: true
+    type: DATETIME
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: category_message
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: template_name
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: template_language
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: agent
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: delivered_at
+    is_dttm: true
+    is_active: true
+    type: DATETIME
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: read_at
+    is_dttm: true
+    is_active: true
+    type: DATETIME
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: failed_at
+    is_dttm: true
+    is_active: true
+    type: DATETIME
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: campaign_id
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: participant_phone
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: participant_name
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: reply_to_message_id
+    is_dttm: false
+    is_active: true
+    type: STRING
+    groupby: true
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: is_deleted
+    is_dttm: false
+    is_active: true
+    type: BIGINT
+    groupby: false
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+  - column_name: _version
+    is_dttm: false
+    is_active: true
+    type: BIGINT
+    groupby: false
+    filterable: true
+    verbose_name: null
+    advanced_data_type: null
+    expression: null
+    description: null
+    python_date_format: null
+    extra: null
+version: 1.0.0
+database_uuid: cd437181-14b7-4852-a9ad-ea528b1a271b

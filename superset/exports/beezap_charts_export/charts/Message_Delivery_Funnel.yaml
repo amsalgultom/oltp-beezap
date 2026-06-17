@@ -1,0 +1,24 @@
+slice_name: Message Delivery Funnel
+viz_type: funnel
+cache_timeout: null
+uuid: 6c9ccaff-6820-4329-abe1-9c3d9f061829
+version: 1.0.0
+dataset_uuid: c24584e5-9f52-4d27-a06e-961f8fb98714
+query_context: null
+params:
+  viz_type: funnel
+  groupby:
+    - status
+  metric: sum__message_count
+  adhoc_filters: []
+  row_limit: 10
+  sort_by_metric: true
+  time_range: No filter
+  color_scheme: supersetColors
+  label_type: key_percent
+  number_format: SMART_NUMBER
+  show_legend: true
+  legendOrientation: top
+  legendType: scroll
+  tooltipTimeFormat: smart_date
+  extra_form_data: {}
